@@ -15,6 +15,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using CombinePdf_GUI.Extensions;
+using System.Diagnostics;
 
 namespace CombinePdf_GUI.ViewModels
 {
@@ -33,6 +34,8 @@ namespace CombinePdf_GUI.ViewModels
         // Data
         private ObservableCollection<Pdf> mPdfList;
         private IEnumerable<Pdf> mSelectedPdfs;
+        private bool mIsOpenPdfAfterCombine;
+        private bool mIsOpenFileExplorerAfterCombine;
 
         // Commands
         public DelegateCommand AddPdfCommand
@@ -91,6 +94,16 @@ namespace CombinePdf_GUI.ViewModels
                 RemovePdfCommand.RaiseCanExecuteChanged();
             }
         }
+        public bool IsOpenPdfAfterCombine
+        {
+            get => mIsOpenPdfAfterCombine;
+            set => SetProperty(ref mIsOpenPdfAfterCombine, value);
+        }
+        public bool IsOpenFileExplorerAfterCombine
+        {
+            get => mIsOpenFileExplorerAfterCombine;
+            set => SetProperty(ref mIsOpenFileExplorerAfterCombine, value);
+        }
         #endregion
 
         #region Constructor
@@ -128,22 +141,44 @@ namespace CombinePdf_GUI.ViewModels
         private void CombinePdfExecute()
         {
             // Loop through all PDF
-            PdfDocument combinedPdf = new PdfDocument();
-            foreach (Pdf pdf in PdfList)
+            using (PdfDocument combinedPdf = new PdfDocument())
             {
-                combinedPdf.AddPdf(pdf.Document);
-            }
+                foreach (Pdf pdf in PdfList)
+                {
+                    combinedPdf.AddPdf(pdf.Document);
+                } 
 
-            SaveFileDialog dialog = new SaveFileDialog()
-            {
-                Title = "Save PDF",
-                Filter = "Adobe PDF Files|*.pdf",
-                CheckPathExists = true
-            };
+                SaveFileDialog dialog = new SaveFileDialog()
+                {
+                    Title = "Save PDF",
+                    Filter = "Adobe PDF Files|*.pdf",
+                    CheckPathExists = true
+                };
 
-            if (dialog.ShowDialog() == true)
-            {
-                combinedPdf.Save(dialog.FileName);
+                if (dialog.ShowDialog() == true)
+                {
+                    combinedPdf.Save(dialog.FileName);
+
+                    using (Process p = new Process())
+                    {
+                        if (IsOpenFileExplorerAfterCombine)
+                        {
+                            // Open the folder in File Explorer
+                            p.StartInfo = new ProcessStartInfo($"cmd.exe")
+                            {
+                                WindowStyle = ProcessWindowStyle.Hidden,
+                                Arguments = $"/c explorer {Path.GetDirectoryName(dialog.FileName)}"
+                            };
+                            p.Start();
+                        }
+                        if (IsOpenPdfAfterCombine)
+                        {
+                            // Open the PDF
+                            p.StartInfo = new ProcessStartInfo(dialog.FileName);
+                            p.Start();
+                        }
+                    }
+                }
             }
         }
         private bool CombinePdfCanExecute()

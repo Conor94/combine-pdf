@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="CombinePdfUserControl"
     Width="509.5"
-    Height="354.5"
+    Height="400.5"
     FocusManager.FocusedElement="{Binding ElementName=AddPdfButton}"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -126,6 +126,28 @@
             Command="{Binding CombinePdfCommand}"
             Content="Combine"
             Style="{StaticResource BlueButton}" />
+        <!--#endregion-->
+        <!--#region Checkboxes-->
+        <Label
+            Margin="46,353,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Open PDF after combine" />
+        <CheckBox
+            Margin="26,358,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            IsChecked="{Binding IsOpenPdfAfterCombine}" />
+        <Label
+            Margin="46,373,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Open folder in File Explorer after combine" />
+        <CheckBox
+            Margin="26,379,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            IsChecked="{Binding IsOpenFileExplorerAfterCombine}" />
         <!--#endregion-->
     </Grid>
 </UserControl>
