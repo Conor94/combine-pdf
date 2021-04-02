@@ -28,7 +28,7 @@
             SelectionMode="Multiple">
             <b:Interaction.Triggers>
                 <b:EventTrigger EventName="SelectionChanged">
-                    <b:InvokeCommandAction Command="{Binding PdfSelectedCommand}" CommandParameter="{Binding ElementName=PdfListView}" />
+                    <b:InvokeCommandAction Command="{Binding PdfSelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=PdfListView}" />
                 </b:EventTrigger>
             </b:Interaction.Triggers>
             <ListView.InputBindings>
