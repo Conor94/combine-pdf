@@ -1,0 +1,131 @@
+﻿<UserControl
+    x:Class="CombinePdf_GUI.Views.CombinePdfView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:converters="clr-namespace:CombinePdf_GUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="CombinePdfUserControl"
+    Width="509.5"
+    Height="354.5"
+    FocusManager.FocusedElement="{Binding ElementName=AddPdfButton}"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:FileSizeConverter x:Key="FileSizeConverterInstance" />
+    </UserControl.Resources>
+
+    <Grid>
+        <!--#region Select PDF-->
+        <ListView
+            x:Name="PdfListView"
+            Width="463"
+            Height="219"
+            Margin="6,5,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            ItemsSource="{Binding PdfList, UpdateSourceTrigger=PropertyChanged}"
+            SelectionMode="Multiple">
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="SelectionChanged">
+                    <b:InvokeCommandAction Command="{Binding PdfSelectedCommand}" CommandParameter="{Binding ElementName=PdfListView}" />
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+            <ListView.InputBindings>
+                <KeyBinding
+                    Key="A"
+                    Command="{Binding SelectAllPdfsCommand}"
+                    CommandParameter="{Binding ElementName=PdfListView}"
+                    Modifiers="Ctrl" />
+                <KeyBinding
+                    Key="D"
+                    Command="{Binding UnselectAllPdfsCommand}"
+                    CommandParameter="{Binding ElementName=PdfListView}"
+                    Modifiers="Ctrl" />
+                <KeyBinding
+                    Key="Delete"
+                    Command="{Binding RemovePdfCommand}"
+                    CommandParameter="{Binding ElementName=PdfListView}" />
+            </ListView.InputBindings>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        Width="360"
+                        DisplayMemberBinding="{Binding Filename}"
+                        Header="Name" />
+                    <GridViewColumn
+                        Width="40"
+                        DisplayMemberBinding="{Binding Document.PageCount}"
+                        Header="Pages" />
+                    <GridViewColumn
+                        Width="47"
+                        DisplayMemberBinding="{Binding Document.FileSize, Converter={StaticResource FileSizeConverterInstance}}"
+                        Header="Size" />
+                </GridView>
+            </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <Button
+            x:Name="AddPdfButton"
+            Width="228.5"
+            Height="45"
+            Margin="6,229,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Center"
+            Command="{Binding AddPdfCommand}"
+            Content="Add"
+            Focusable="True"
+            Style="{StaticResource BlueButton}" />
+        <Button
+            x:Name="RemovePdfButton"
+            Width="228.5"
+            Height="45"
+            Margin="238,229,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Command="{Binding RemovePdfCommand}"
+            CommandParameter="{Binding ElementName=PdfListView}"
+            Style="{StaticResource BlueButton}">
+            <TextBlock
+                Width="46"
+                Text="Remove (Del)"
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+        </Button>
+        <Button
+            Width="28"
+            Margin="474,96,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Command="{Binding MoveUpCommand}"
+            CommandParameter="{Binding ElementName=PdfListView}"
+            Content="5"
+            FontFamily="Marlett" />
+        <Button
+            Width="28"
+            Margin="474,115,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Command="{Binding MoveDownCommand}"
+            CommandParameter="{Binding ElementName=PdfListView}"
+            Content="6"
+            FontFamily="Marlett" />
+        <!--#endregion-->
+        <!--#region Output combined PDF-->
+        <Button
+            Width="463"
+            Height="69"
+            Margin="6,279,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Command="{Binding CombinePdfCommand}"
+            Content="Combine"
+            Style="{StaticResource BlueButton}" />
+        <!--#endregion-->
+    </Grid>
+</UserControl>
