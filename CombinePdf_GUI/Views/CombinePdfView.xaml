@@ -128,25 +128,20 @@
             Style="{StaticResource BlueButton}" />
         <!--#endregion-->
         <!--#region Checkboxes-->
-        <Label
-            Margin="46,353,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Open PDF after combine" />
         <CheckBox
+            Width="156"
+            Height="16"
             Margin="26,358,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
+            Content="Open PDF after combine"
             IsChecked="{Binding IsOpenPdfAfterCombine}" />
-        <Label
-            Margin="46,373,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Open folder in File Explorer after combine" />
         <CheckBox
+            Width="246"
             Margin="26,379,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
+            Content="Open folder in File Explorer after combine"
             IsChecked="{Binding IsOpenFileExplorerAfterCombine}" />
         <!--#endregion-->
     </Grid>
