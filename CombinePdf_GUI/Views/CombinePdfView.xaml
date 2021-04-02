@@ -71,7 +71,7 @@
         </ListView>
         <Button
             x:Name="AddPdfButton"
-            Width="228.5"
+            Width="246"
             Height="45"
             Margin="6,229,0,0"
             HorizontalAlignment="Left"
@@ -83,9 +83,9 @@
             Style="{StaticResource BlueButton}" />
         <Button
             x:Name="RemovePdfButton"
-            Width="228.5"
+            Width="246"
             Height="45"
-            Margin="238,229,0,0"
+            Margin="254,229,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Command="{Binding RemovePdfCommand}"
@@ -118,7 +118,7 @@
         <!--#endregion-->
         <!--#region Output combined PDF-->
         <Button
-            Width="463"
+            Width="496"
             Height="69"
             Margin="6,279,0,0"
             HorizontalAlignment="Left"
