@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using CombinePdf_GUI.Extensions;
 using System.Diagnostics;
+using System;
 
 namespace CombinePdf_GUI.ViewModels
 {
@@ -191,8 +192,10 @@ namespace CombinePdf_GUI.ViewModels
             IEnumerable<Pdf> selectedPdfs = listView.SelectedItems.Cast<Pdf>();
             foreach (Pdf pdf in selectedPdfs.ToList())
             {
+                pdf.Dispose();
                 PdfList.Remove(pdf);
             }
+            GC.Collect();
             listView.Focus();
         }
         private bool RemovePdfCanExecute(ListView listView)

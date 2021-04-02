@@ -1,8 +1,8 @@
 ﻿using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using PrismBase.Mvvm;
+using System;
 using System.IO;
-using System.Windows.Controls;
 
 namespace CombinePdf_GUI.Models
 {
@@ -11,7 +11,7 @@ namespace CombinePdf_GUI.Models
         #region Fields and properties
         private string mFilename;
         private PdfDocument mPdfDocument;
-        private bool mIsSelected;
+        private bool mIsSelected;        
 
         public string Filename
         {
@@ -33,8 +33,27 @@ namespace CombinePdf_GUI.Models
         #region Constructor
         public Pdf(string filename)
         {
+            mIsDisposed = false;
             Filename = Path.GetFileName(filename);
             Document = PdfReader.Open(filename, PdfDocumentOpenMode.Import);
+        }
+        #endregion
+
+        #region IDisposable
+        protected override void Dispose(bool disposing)
+        {
+            if (mIsDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                Document.Dispose();
+            }
+            Document = null;
+
+            mIsDisposed = true;            
         }
         #endregion
     }
