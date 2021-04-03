@@ -17,6 +17,8 @@ using System.Windows.Controls;
 using CombinePdf_GUI.Extensions;
 using System.Diagnostics;
 using System;
+using System.Windows.Input;
+using System.Windows;
 
 namespace CombinePdf_GUI.ViewModels
 {
@@ -32,11 +34,14 @@ namespace CombinePdf_GUI.ViewModels
         private DelegateCommand<ListView> mMoveDownCommand;
         private DelegateCommand<ListView> mSelectAllPdfsCommand;
         private DelegateCommand<ListView> mUnselectAllPdfsCommand;
+        private DelegateCommand<KeyEventArgs> mKeyUpCommand;
+        private DelegateCommand<KeyEventArgs> mKeyDownCommand;
         // Data
         private ObservableCollection<Pdf> mPdfList;
         private IEnumerable<Pdf> mSelectedPdfs;
         private bool mIsOpenPdfAfterCombine;
         private bool mIsOpenFileExplorerAfterCombine;
+        private bool mIsShiftPressed;
 
         // Commands
         public DelegateCommand AddPdfCommand
@@ -79,6 +84,16 @@ namespace CombinePdf_GUI.ViewModels
             get => mUnselectAllPdfsCommand ?? (mUnselectAllPdfsCommand = new DelegateCommand<ListView>(UnselectAllPdfsExecute, UnselectAllPdfsCanExecute));
             set => mUnselectAllPdfsCommand = value;
         }
+        public DelegateCommand<KeyEventArgs> KeyUpCommand
+        {
+            get => mKeyUpCommand ?? (mKeyUpCommand = new DelegateCommand<KeyEventArgs>(KeyUpExecute));
+            set => mKeyUpCommand = value;
+        }
+        public DelegateCommand<KeyEventArgs> KeyDownCommand
+        {
+            get => mKeyDownCommand ?? (mKeyDownCommand = new DelegateCommand<KeyEventArgs>(KeyDownExecute));
+            set => mKeyDownCommand = value;
+        }
 
         // Data
         public ObservableCollection<Pdf> PdfList
@@ -104,6 +119,11 @@ namespace CombinePdf_GUI.ViewModels
         {
             get => mIsOpenFileExplorerAfterCombine;
             set => SetProperty(ref mIsOpenFileExplorerAfterCombine, value);
+        }
+        public bool IsShiftPressed
+        {
+            get => mIsShiftPressed;
+            set => SetProperty(ref mIsShiftPressed, value);
         }
         #endregion
 
@@ -147,7 +167,7 @@ namespace CombinePdf_GUI.ViewModels
                 foreach (Pdf pdf in PdfList)
                 {
                     combinedPdf.AddPdf(pdf.Document);
-                } 
+                }
 
                 SaveFileDialog dialog = new SaveFileDialog()
                 {
@@ -205,33 +225,41 @@ namespace CombinePdf_GUI.ViewModels
 
         private void PdfSelectedExecute(IList tmpSelectedPdfs)
         {
+            if (!IsShiftPressed)
+            {
+                // Unselect all PDFs except the most recently selected (most recently selected is the last element in the list)
+                if (tmpSelectedPdfs.Count > 1)
+                {
+                    // Changing the value of IsSelected will call this method again because of data binding
+                    ((Pdf)tmpSelectedPdfs[0]).IsSelected = false;
+                }
+            }
+            else
+            {
+                List<Pdf> pdfList = PdfList.ToList();
+                int firstIndex = pdfList.IndexOf((Pdf)tmpSelectedPdfs[0]);
+                int lastIndex = pdfList.IndexOf((Pdf)tmpSelectedPdfs[tmpSelectedPdfs.Count - 1]);
+                if (firstIndex < lastIndex)
+                {
+                    // Select all PDFs between the first and last index
+                    while (firstIndex < lastIndex)
+                    {
+                        PdfList.ElementAt(firstIndex).IsSelected = true;
+                        firstIndex++;
+                    }
+                }
+                else
+                {
+                    // Select all PDFs between the first and last index
+                    while (firstIndex > lastIndex)
+                    {
+                        PdfList.ElementAt(firstIndex).IsSelected = true;
+                        firstIndex--;
+                    }
+                }
+            }
             SelectedPdfs = tmpSelectedPdfs.Cast<Pdf>();
         }
-
-        //private void PdfSelectedExecute(ListView listView)
-        //{
-        //    if (!mIsShiftPressed)
-        //    {
-        //        if (listView.SelectedItem is Pdf selectedPdf)
-        //        {
-        //            int count = listView.SelectedItems.Count;
-        //            for (int i = 0; i < count; i++)
-        //            {
-        //                if (i != (count - 1))
-        //                {
-        //                    listView.SelectedItems.RemoveAt(0);                           
-        //                }
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (listView.SelectedItems is IList selectedItems)
-        //        {
-        //            SelectedPdfs = selectedItems.Cast<Pdf>();
-        //        }
-        //    }
-        //}
 
         private void MoveUpExecute(ListView listView)
         {
@@ -285,6 +313,22 @@ namespace CombinePdf_GUI.ViewModels
         private bool UnselectAllPdfsCanExecute(ListView listView)
         {
             return PdfList.Count > 0;
+        }
+
+        private void KeyUpExecute(KeyEventArgs e)
+        {
+            if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
+            {
+                IsShiftPressed = false;
+            }
+        }
+
+        private void KeyDownExecute(KeyEventArgs e)
+        {
+            if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
+            {
+                IsShiftPressed = true;
+            }
         }
         #endregion
 
