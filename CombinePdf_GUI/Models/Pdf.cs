@@ -37,6 +37,13 @@ namespace CombinePdf_GUI.Models
             Filename = Path.GetFileName(filename);
             Document = PdfReader.Open(filename, PdfDocumentOpenMode.Import);
         }
+
+        public Pdf(Pdf pdf)
+        {
+            Filename = pdf.Filename;
+            Document = pdf.Document;
+            IsSelected = pdf.IsSelected;
+        }
         #endregion
 
         #region IDisposable

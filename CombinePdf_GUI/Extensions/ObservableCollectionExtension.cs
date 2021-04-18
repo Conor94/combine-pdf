@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace CombinePdf_GUI.Extensions
 {
@@ -16,9 +16,14 @@ namespace CombinePdf_GUI.Extensions
                     // Don't rearrange the first element
                     if (i != 0)
                     {
-                        T previousItem = items[i - 1];
-                        items[i - 1] = items[i];
-                        items[i] = previousItem;
+                        Type t = typeof(T);
+
+                        T previousItem = (T)Activator.CreateInstance(t, items[i - 1]);
+                        ////T previousItem = items[i - 1];
+                        ////items[i - 1] = items[i];
+                        ////items[i] = previousItem;
+                        items[i - 1] = (T)Activator.CreateInstance(t, items[i]);
+                        items[i] = (T)Activator.CreateInstance(t, previousItem);
                     }
                     else
                     {
@@ -41,14 +46,20 @@ namespace CombinePdf_GUI.Extensions
                 {
                     if (i != (count - 1))
                     {
-                        T nextItem = items[i + 1];
-                        items[i + 1] = items[i];
-                        items[i] = nextItem;
+                        Type t = typeof(T);
+
+                        T nextItem = (T)Activator.CreateInstance(t, items[i + 1]);
+                        ////T nextItem = items[i + 1];
+                        ////items[i + 1] = items[i];
+                        ////items[i] = nextItem;
+                        items[i + 1] = (T)Activator.CreateInstance(t, items[i]);
+                        items[i] = (T)Activator.CreateInstance(t, nextItem);
                     }
                     else if (i == (count - 1))
                     {
                         // Add the last element to the front
-                        items = new ObservableCollection<T>(items.Prepend(items[count - 1]));
+                        items.Insert(0, items[count - 1]);
+
                         // Remove the last element
                         items.RemoveAt(count);
                         break; // Stop moving items down. An item has been removed from the bottom of the list, which causes everything above it to move down.

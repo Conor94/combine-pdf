@@ -18,7 +18,6 @@ using CombinePdf_GUI.Extensions;
 using System.Diagnostics;
 using System;
 using System.Windows.Input;
-using System.Windows;
 
 namespace CombinePdf_GUI.ViewModels
 {
@@ -42,6 +41,8 @@ namespace CombinePdf_GUI.ViewModels
         private bool mIsOpenPdfAfterCombine;
         private bool mIsOpenFileExplorerAfterCombine;
         private bool mIsShiftPressed;
+        private bool mIsSelectionHandled;
+        private bool mIsSelectAll;
 
         // Commands
         public DelegateCommand AddPdfCommand
@@ -106,7 +107,8 @@ namespace CombinePdf_GUI.ViewModels
             get => mSelectedPdfs;
             set
             {
-                SetProperty(ref mSelectedPdfs, value);
+                //SetProperty(ref mSelectedPdfs, value);
+                mSelectedPdfs = value;
                 RemovePdfCommand.RaiseCanExecuteChanged();
             }
         }
@@ -132,6 +134,9 @@ namespace CombinePdf_GUI.ViewModels
         {
             PdfList = new ObservableCollection<Pdf>();
             PdfList.CollectionChanged += SelectedPdfs_OnCollectionChanged;
+
+            mIsSelectionHandled = false;
+            mIsSelectAll = false;
         }
         #endregion
 
@@ -225,46 +230,66 @@ namespace CombinePdf_GUI.ViewModels
 
         private void PdfSelectedExecute(IList tmpSelectedPdfs)
         {
-            if (!IsShiftPressed)
+            if (!mIsSelectAll)
             {
-                // Unselect all PDFs except the most recently selected (most recently selected is the last element in the list)
-                if (tmpSelectedPdfs.Count > 1)
+                if (!IsShiftPressed)
                 {
-                    // Changing the value of IsSelected will call this method again because of data binding
-                    ((Pdf)tmpSelectedPdfs[0]).IsSelected = false;
-                }
-            }
-            else
-            {
-                List<Pdf> pdfList = PdfList.ToList();
-                int firstIndex = pdfList.IndexOf((Pdf)tmpSelectedPdfs[0]);
-                int lastIndex = pdfList.IndexOf((Pdf)tmpSelectedPdfs[tmpSelectedPdfs.Count - 1]);
-                if (firstIndex < lastIndex)
-                {
-                    // Select all PDFs between the first and last index
-                    while (firstIndex < lastIndex)
+                    // Unselect all PDFs except the most recently selected (most recently selected is the last element in the list)
+                    if (SelectedPdfs != null &&
+                        tmpSelectedPdfs.Count > 0 &&
+                        SelectedPdfs.Contains(tmpSelectedPdfs[0]) &&
+                        !mIsSelectionHandled)
                     {
-                        PdfList.ElementAt(firstIndex).IsSelected = true;
-                        firstIndex++;
+                        List<Pdf> list = SelectedPdfs.ToList();
+                        list.Remove((Pdf)tmpSelectedPdfs[0]);
+                        SelectedPdfs = list;
+                        ((Pdf)tmpSelectedPdfs[0]).IsSelected = false;
+                    }
+                    else if (SelectedPdfs != null && SelectedPdfs.Count() > 0)
+                    {
+                        mIsSelectionHandled = true;
+                        tmpSelectedPdfs.Add(SelectedPdfs.ElementAt(0));
                     }
                 }
                 else
                 {
-                    // Select all PDFs between the first and last index
-                    while (firstIndex > lastIndex)
+                    List<Pdf> pdfList = PdfList.ToList();
+                    int firstIndex = pdfList.IndexOf((Pdf)tmpSelectedPdfs[0]);
+                    int lastIndex = pdfList.IndexOf((Pdf)tmpSelectedPdfs[tmpSelectedPdfs.Count - 1]);
+                    if (firstIndex < lastIndex)
                     {
-                        PdfList.ElementAt(firstIndex).IsSelected = true;
-                        firstIndex--;
+                        // Select all PDFs between the first and last index
+                        while (firstIndex < lastIndex)
+                        {
+                            PdfList.ElementAt(firstIndex).IsSelected = true;
+                            firstIndex++;
+                        }
+                    }
+                    else
+                    {
+                        // Select all PDFs between the first and last index
+                        while (firstIndex > lastIndex)
+                        {
+                            PdfList.ElementAt(firstIndex).IsSelected = true;
+                            firstIndex--;
+                        }
                     }
                 }
+
+                mIsSelectionHandled = false;
             }
-            SelectedPdfs = tmpSelectedPdfs.Cast<Pdf>();
+            else
+            {
+                mIsSelectAll = false;
+            }
+            
+            SelectedPdfs = new List<Pdf>(tmpSelectedPdfs.Cast<Pdf>()); 
         }
 
         private void MoveUpExecute(ListView listView)
         {
             // Keep a list of the selected backups
-            List<Pdf> selectedPdfs = SelectedPdfs.ToList();
+            List<Pdf> selectedPdfs = listView.SelectedItems.Cast<Pdf>().ToList();
 
             // Move the selected PDFs up
             PdfList.MoveUp(selectedPdfs);
@@ -280,8 +305,8 @@ namespace CombinePdf_GUI.ViewModels
 
         private void MoveDownExecute(ListView listView)
         {
-            // Keep a list of the selected backups
-            List<Pdf> selectedPdfs = SelectedPdfs.ToList();
+            // Keep a list of the selected backups            
+            List<Pdf> selectedPdfs = listView.SelectedItems.Cast<Pdf>().ToList();
 
             // Move the selected PDFs down
             PdfList = PdfList.MoveDown(selectedPdfs);
@@ -297,6 +322,7 @@ namespace CombinePdf_GUI.ViewModels
 
         private void SelectAllPdfsExecute(ListView listView)
         {
+            mIsSelectAll = true;
             listView.SelectAll();
             listView.Focus();
         }
@@ -344,9 +370,9 @@ namespace CombinePdf_GUI.ViewModels
         #region Helpers
         private static void ReselectPdfs(List<Pdf> pdfs)
         {
-            foreach (Pdf pdf in pdfs.ToList())
+            for (int i = 0; i < pdfs.Count; i++)
             {
-                pdf.IsSelected = true;
+                pdfs[i].IsSelected = true;
             }
         }
         #endregion
