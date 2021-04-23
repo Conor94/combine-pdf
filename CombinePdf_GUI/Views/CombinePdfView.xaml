@@ -58,11 +58,21 @@
                     Key="Delete"
                     Command="{Binding RemovePdfCommand}"
                     CommandParameter="{Binding ElementName=PdfListView}" />
+                <KeyBinding
+                    Modifiers="Ctrl"
+                    Key="Up"
+                    Command="{Binding MoveUpCommand}"
+                    CommandParameter="{Binding ElementName=PdfListView}" />
+                <KeyBinding
+                    Modifiers="Ctrl"
+                    Key="Down"
+                    Command="{Binding MoveDownCommand}"
+                    CommandParameter="{Binding ElementName=PdfListView}" />
             </ListView.InputBindings>
             <ListView.View>
                 <GridView>
                     <GridViewColumn
-                        Width="360"
+                        Width="328"
                         DisplayMemberBinding="{Binding Filename}"
                         Header="Name" />
                     <GridViewColumn
