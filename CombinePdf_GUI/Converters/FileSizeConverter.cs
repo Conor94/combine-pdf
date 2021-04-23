@@ -18,11 +18,13 @@ namespace CombinePdf_GUI.Converters
                 if (fileSize >= GigbyteInBytes)
                 {
                     size = fileSize / 1024 / 1024 / 1024;
+                    size = Math.Round(size, 2);
                     return $"{size} GB";
                 }
                 else if (fileSize >= MegabyteInBytes)
                 {
                     size = fileSize / 1024 / 1024;
+                    size = Math.Round(size, 2);
                     return $"{size} MB"; 
                 }
                 else
