@@ -32,15 +32,16 @@
             Margin="6,5,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
+            AllowDrop="True"
             ItemsSource="{Binding PdfList, UpdateSourceTrigger=PropertyChanged}"
             SelectionMode="Multiple">
             <b:Interaction.Triggers>
                 <b:EventTrigger EventName="SelectionChanged">
                     <b:InvokeCommandAction Command="{Binding PdfSelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=PdfListView}" />
                 </b:EventTrigger>
-                <!--<b:EventTrigger EventName="PreviewMouseDown">
-                    <b:InvokeCommandAction Command="{Binding PdfSelectedCommand}" CommandParameter="{Binding SelectedItems, ElementName=PdfListView}"/>
-                </b:EventTrigger>-->
+                <b:EventTrigger EventName="Drop">
+                    <b:InvokeCommandAction Command="{Binding PdfDropCommand}" PassEventArgsToCommand="True" />
+                </b:EventTrigger>
             </b:Interaction.Triggers>
             <ListView.InputBindings>
                 <KeyBinding

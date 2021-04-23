@@ -16,6 +16,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -35,6 +36,7 @@ namespace CombinePdf_GUI.ViewModels
         private DelegateCommand<ListView> mUnselectAllPdfsCommand;
         private DelegateCommand<KeyEventArgs> mKeyUpCommand;
         private DelegateCommand<KeyEventArgs> mKeyDownCommand;
+        private DelegateCommand<DragEventArgs> mPdfDropCommand;
         // Data
         private ObservableCollection<Pdf> mPdfList;
         private IEnumerable<Pdf> mSelectedPdfs;
@@ -94,6 +96,11 @@ namespace CombinePdf_GUI.ViewModels
         {
             get => mKeyDownCommand ?? (mKeyDownCommand = new DelegateCommand<KeyEventArgs>(KeyDownExecute));
             set => mKeyDownCommand = value;
+        }
+        public DelegateCommand<DragEventArgs> PdfDropCommand
+        {
+            get => mPdfDropCommand ?? (mPdfDropCommand = new DelegateCommand<DragEventArgs>(PdfDropExecute));
+            set => mPdfDropCommand = value;
         }
 
         // Data
@@ -282,8 +289,8 @@ namespace CombinePdf_GUI.ViewModels
             {
                 mIsSelectAll = false;
             }
-            
-            SelectedPdfs = new List<Pdf>(tmpSelectedPdfs.Cast<Pdf>()); 
+
+            SelectedPdfs = new List<Pdf>(tmpSelectedPdfs.Cast<Pdf>());
         }
 
         private void MoveUpExecute(ListView listView)
@@ -354,6 +361,24 @@ namespace CombinePdf_GUI.ViewModels
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
             {
                 IsShiftPressed = true;
+            }
+        }
+
+        private void PdfDropExecute(DragEventArgs e)
+        {
+            if (e.Data is DataObject data)
+            {
+                if (data.ContainsFileDropList())
+                {
+                    StringCollection files = data.GetFileDropList();
+
+                    int fileCount = files.Count;
+                    for (int i = 0; i < fileCount; i++)
+                    {
+                        Pdf pdf = new Pdf(files[i]);
+                        PdfList.Add(pdf);
+                    }
+                }
             }
         }
         #endregion
