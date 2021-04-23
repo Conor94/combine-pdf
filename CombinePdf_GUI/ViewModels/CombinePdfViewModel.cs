@@ -1,4 +1,6 @@
-﻿using CombinePdf_GUI.Models;
+﻿using CombinePdf_GUI.Extensions;
+using CombinePdf_GUI.Models;
+using DotNetExtension;
 using Microsoft.Win32;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
@@ -6,17 +8,15 @@ using Prism.Commands;
 using Prism.Events;
 using Prism.Ioc;
 using PrismBase.Mvvm;
-using System.Collections.ObjectModel;
-using System.IO;
-using DotNetExtension;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Linq;
-using System.Collections.Generic;
-using System.Windows.Controls;
-using CombinePdf_GUI.Extensions;
-using System.Diagnostics;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace CombinePdf_GUI.ViewModels
