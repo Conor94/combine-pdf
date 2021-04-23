@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace CombinePdf_GUI.Extensions
 {
+    /// <summary>
+    /// Adds methods to move an element up and down within an <see cref="ObservableCollection{T}"/>.
+    /// </summary>
     public static class ObservableCollectionExtension
     {
         public static void MoveUp<T>(this ObservableCollection<T> items, List<T> selectedItems)
@@ -12,18 +14,13 @@ namespace CombinePdf_GUI.Extensions
             for (int i = 0; i < count; i++)
             {
                 if (selectedItems.Contains(items[i]))
-                {
-                    // Don't rearrange the first element
+                {                    
                     if (i != 0)
                     {
-                        Type t = typeof(T);
-
-                        T previousItem = (T)Activator.CreateInstance(t, items[i - 1]);
-                        ////T previousItem = items[i - 1];
-                        ////items[i - 1] = items[i];
-                        ////items[i] = previousItem;
-                        items[i - 1] = (T)Activator.CreateInstance(t, items[i]);
-                        items[i] = (T)Activator.CreateInstance(t, previousItem);
+                        T previousItem = items[i - 1]; // keep a copy of the previous item
+                        int previousItemIndex = items.IndexOf(items[i - 1]);
+                        items.RemoveAt(previousItemIndex); // Remove the previous item
+                        items.Insert(previousItemIndex + 1, previousItem);
                     }
                     else
                     {
@@ -46,14 +43,10 @@ namespace CombinePdf_GUI.Extensions
                 {
                     if (i != (count - 1))
                     {
-                        Type t = typeof(T);
-
-                        T nextItem = (T)Activator.CreateInstance(t, items[i + 1]);
-                        ////T nextItem = items[i + 1];
-                        ////items[i + 1] = items[i];
-                        ////items[i] = nextItem;
-                        items[i + 1] = (T)Activator.CreateInstance(t, items[i]);
-                        items[i] = (T)Activator.CreateInstance(t, nextItem);
+                        T currentItem = items[i];
+                        int currentItemIndex = items.IndexOf(items[i]);
+                        items.RemoveAt(currentItemIndex); // Remove the next item
+                        items.Insert(currentItemIndex + 1, currentItem);
                     }
                     else if (i == (count - 1))
                     {
