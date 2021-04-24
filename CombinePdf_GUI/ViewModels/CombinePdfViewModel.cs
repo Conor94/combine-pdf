@@ -24,7 +24,7 @@ namespace CombinePdf_GUI.ViewModels
 {
     public class CombinePdfViewModel : ViewModelBase
     {
-        #region Fields and properties        
+        #region Fields
         // Commands
         private DelegateCommand mAddPdfCommand;
         private DelegateCommand mCombinePdfCommand;
@@ -43,9 +43,12 @@ namespace CombinePdf_GUI.ViewModels
         private bool mIsOpenPdfAfterCombine;
         private bool mIsOpenFileExplorerAfterCombine;
         private bool mIsShiftPressed;
-        private bool mIsSelectionHandled;
+        private bool mIsCtrlPressed;
         private bool mIsSelectAll;
+        private bool mIsSelectionHandled;
+        #endregion
 
+        #region Properties
         // Commands
         public DelegateCommand AddPdfCommand
         {
@@ -133,6 +136,11 @@ namespace CombinePdf_GUI.ViewModels
         {
             get => mIsShiftPressed;
             set => SetProperty(ref mIsShiftPressed, value);
+        }
+        public bool IsCtrlPressed
+        {
+            get => mIsCtrlPressed;
+            set => SetProperty(ref mIsCtrlPressed, value);
         }
         #endregion
 
@@ -239,26 +247,7 @@ namespace CombinePdf_GUI.ViewModels
         {
             if (!mIsSelectAll)
             {
-                if (!IsShiftPressed)
-                {
-                    // Unselect all PDFs except the most recently selected (most recently selected is the last element in the list)
-                    if (SelectedPdfs != null &&
-                        tmpSelectedPdfs.Count > 0 &&
-                        SelectedPdfs.Contains(tmpSelectedPdfs[0]) &&
-                        !mIsSelectionHandled)
-                    {
-                        List<Pdf> list = SelectedPdfs.ToList();
-                        list.Remove((Pdf)tmpSelectedPdfs[0]);
-                        SelectedPdfs = list;
-                        ((Pdf)tmpSelectedPdfs[0]).IsSelected = false;
-                    }
-                    else if (SelectedPdfs != null && SelectedPdfs.Count() > 0)
-                    {
-                        mIsSelectionHandled = true;
-                        tmpSelectedPdfs.Add(SelectedPdfs.ElementAt(0));
-                    }
-                }
-                else
+                if (IsShiftPressed && !IsCtrlPressed)
                 {
                     List<Pdf> pdfList = PdfList.ToList();
                     int firstIndex = pdfList.IndexOf((Pdf)tmpSelectedPdfs[0]);
@@ -280,6 +269,25 @@ namespace CombinePdf_GUI.ViewModels
                             PdfList.ElementAt(firstIndex).IsSelected = true;
                             firstIndex--;
                         }
+                    }
+                }
+                else if (!IsCtrlPressed && !IsShiftPressed)
+                {
+                    // Unselect all PDFs except the most recently selected (most recently selected is the last element in the list)
+                    if (SelectedPdfs != null &&
+                        tmpSelectedPdfs.Count > 0 &&
+                        SelectedPdfs.Contains(tmpSelectedPdfs[0]) &&
+                        !mIsSelectionHandled)
+                    {
+                        List<Pdf> list = SelectedPdfs.ToList();
+                        list.Remove((Pdf)tmpSelectedPdfs[0]);
+                        SelectedPdfs = list;
+                        ((Pdf)tmpSelectedPdfs[0]).IsSelected = false;
+                    }
+                    else if (SelectedPdfs != null && SelectedPdfs.Count() > 0)
+                    {
+                        mIsSelectionHandled = true;
+                        tmpSelectedPdfs.Add(SelectedPdfs.ElementAt(0));
                     }
                 }
 
@@ -354,6 +362,10 @@ namespace CombinePdf_GUI.ViewModels
             {
                 IsShiftPressed = false;
             }
+            else if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+            {
+                IsCtrlPressed = false;
+            }
         }
 
         private void KeyDownExecute(KeyEventArgs e)
@@ -361,6 +373,10 @@ namespace CombinePdf_GUI.ViewModels
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
             {
                 IsShiftPressed = true;
+            }
+            else if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+            {
+                IsCtrlPressed = true;
             }
         }
 
