@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="CombinePdfUserControl"
+    Background="WhiteSmoke"
     Width="509.5"
     Height="400.5"
     FocusManager.FocusedElement="{Binding ElementName=AddPdfButton}"
@@ -59,15 +60,15 @@
                     Command="{Binding RemovePdfCommand}"
                     CommandParameter="{Binding ElementName=PdfListView}" />
                 <KeyBinding
-                    Modifiers="Ctrl"
                     Key="Up"
                     Command="{Binding MoveUpCommand}"
-                    CommandParameter="{Binding ElementName=PdfListView}" />
+                    CommandParameter="{Binding ElementName=PdfListView}"
+                    Modifiers="Ctrl" />
                 <KeyBinding
-                    Modifiers="Ctrl"
                     Key="Down"
                     Command="{Binding MoveDownCommand}"
-                    CommandParameter="{Binding ElementName=PdfListView}" />
+                    CommandParameter="{Binding ElementName=PdfListView}"
+                    Modifiers="Ctrl" />
             </ListView.InputBindings>
             <ListView.View>
                 <GridView>

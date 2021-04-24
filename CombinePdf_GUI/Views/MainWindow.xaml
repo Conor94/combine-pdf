@@ -12,6 +12,7 @@
     Height="459.5"
     FocusManager.FocusedElement="{Binding SelectedViewModel}"
     ResizeMode="CanMinimize"
+    Background="WhiteSmoke"
     mc:Ignorable="d">
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModels:CombinePdfViewModel}">
