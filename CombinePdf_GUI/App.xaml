@@ -39,5 +39,21 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="ControlStyle" TargetType="Control">
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+
+        <Style BasedOn="{StaticResource ControlStyle}" TargetType="Label">
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+        </Style>
+
+        <Style BasedOn="{StaticResource ControlStyle}" TargetType="TextBox">
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style BasedOn="{StaticResource ControlStyle}" TargetType="CheckBox">
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
     </Application.Resources>
 </prism:PrismApplication>

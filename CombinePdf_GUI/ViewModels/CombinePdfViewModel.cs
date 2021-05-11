@@ -1,7 +1,6 @@
 ﻿using CombinePdf_GUI.Extensions;
 using CombinePdf_GUI.Models;
 using DotNetExtension;
-using Microsoft.Win32;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using Prism.Commands;
@@ -16,9 +15,6 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace CombinePdf_GUI.ViewModels
 {
@@ -27,19 +23,22 @@ namespace CombinePdf_GUI.ViewModels
         #region Fields
         // Commands
         private DelegateCommand mAddPdfCommand;
-        private DelegateCommand mCombinePdfCommand;
-        private DelegateCommand<ListView> mRemovePdfCommand;
+        private DelegateCommand mSelectFolderCommand;
+        private DelegateCommand mSaveCommand;
+        private DelegateCommand<System.Windows.Controls.ListView> mRemovePdfCommand;
         private DelegateCommand<IList> mPdfSelectedCommand;
-        private DelegateCommand<ListView> mMoveUpCommand;
-        private DelegateCommand<ListView> mMoveDownCommand;
-        private DelegateCommand<ListView> mSelectAllPdfsCommand;
-        private DelegateCommand<ListView> mUnselectAllPdfsCommand;
-        private DelegateCommand<KeyEventArgs> mKeyUpCommand;
-        private DelegateCommand<KeyEventArgs> mKeyDownCommand;
-        private DelegateCommand<DragEventArgs> mPdfDropCommand;
+        private DelegateCommand<System.Windows.Controls.ListView> mMoveUpCommand;
+        private DelegateCommand<System.Windows.Controls.ListView> mMoveDownCommand;
+        private DelegateCommand<System.Windows.Controls.ListView> mSelectAllPdfsCommand;
+        private DelegateCommand<System.Windows.Controls.ListView> mUnselectAllPdfsCommand;
+        private DelegateCommand<System.Windows.Input.KeyEventArgs> mKeyUpCommand;
+        private DelegateCommand<System.Windows.Input.KeyEventArgs> mKeyDownCommand;
+        private DelegateCommand<System.Windows.DragEventArgs> mPdfDropCommand;
         // Data
         private ObservableCollection<Pdf> mPdfList;
         private IEnumerable<Pdf> mSelectedPdfs;
+        private string mSelectedFolderPath;
+        private string mSelectedFilename;
         private bool mIsOpenPdfAfterCombine;
         private bool mIsOpenFileExplorerAfterCombine;
         private bool mIsShiftPressed;
@@ -55,14 +54,19 @@ namespace CombinePdf_GUI.ViewModels
             get => mAddPdfCommand ?? (mAddPdfCommand = new DelegateCommand(AddPdfExecute));
             set => mAddPdfCommand = value;
         }
-        public DelegateCommand CombinePdfCommand
+        public DelegateCommand SelectFolderCommand
         {
-            get => mCombinePdfCommand ?? (mCombinePdfCommand = new DelegateCommand(CombinePdfExecute, CombinePdfCanExecute));
-            set => mCombinePdfCommand = value;
+            get => mSelectFolderCommand ?? (mSelectFolderCommand = new DelegateCommand(SelectFolderExecute));
+            set => mSelectFolderCommand = value;
         }
-        public DelegateCommand<ListView> RemovePdfCommand
+        public DelegateCommand SaveCommand
         {
-            get => mRemovePdfCommand ?? (mRemovePdfCommand = new DelegateCommand<ListView>(RemovePdfExecute, RemovePdfCanExecute));
+            get => mSaveCommand ?? (mSaveCommand = new DelegateCommand(SaveExecute, SaveCanExecute));
+            set => mSaveCommand = value;
+        }
+        public DelegateCommand<System.Windows.Controls.ListView> RemovePdfCommand
+        {
+            get => mRemovePdfCommand ?? (mRemovePdfCommand = new DelegateCommand<System.Windows.Controls.ListView>(RemovePdfExecute, RemovePdfCanExecute));
             set => mRemovePdfCommand = value;
         }
         public DelegateCommand<IList> PdfSelectedCommand
@@ -70,42 +74,41 @@ namespace CombinePdf_GUI.ViewModels
             get => mPdfSelectedCommand ?? (mPdfSelectedCommand = new DelegateCommand<IList>(PdfSelectedExecute));
             set => mPdfSelectedCommand = value;
         }
-        public DelegateCommand<ListView> MoveUpCommand
+        public DelegateCommand<System.Windows.Controls.ListView> MoveUpCommand
         {
-            get => mMoveUpCommand ?? (mMoveUpCommand = new DelegateCommand<ListView>(MoveUpExecute, MoveUpCanExecute));
+            get => mMoveUpCommand ?? (mMoveUpCommand = new DelegateCommand<System.Windows.Controls.ListView>(MoveUpExecute, MoveUpCanExecute));
             set => mMoveUpCommand = value;
         }
-        public DelegateCommand<ListView> MoveDownCommand
+        public DelegateCommand<System.Windows.Controls.ListView> MoveDownCommand
         {
-            get => mMoveDownCommand ?? (mMoveDownCommand = new DelegateCommand<ListView>(MoveDownExecute, MoveDownCanExecute));
+            get => mMoveDownCommand ?? (mMoveDownCommand = new DelegateCommand<System.Windows.Controls.ListView>(MoveDownExecute, MoveDownCanExecute));
             set => mMoveDownCommand = value;
         }
-        public DelegateCommand<ListView> SelectAllPdfsCommand
+        public DelegateCommand<System.Windows.Controls.ListView> SelectAllPdfsCommand
         {
-            get => mSelectAllPdfsCommand ?? (mSelectAllPdfsCommand = new DelegateCommand<ListView>(SelectAllPdfsExecute, SelectAllPdfsCanExecute));
+            get => mSelectAllPdfsCommand ?? (mSelectAllPdfsCommand = new DelegateCommand<System.Windows.Controls.ListView>(SelectAllPdfsExecute, SelectAllPdfsCanExecute));
             set => mSelectAllPdfsCommand = value;
         }
-        public DelegateCommand<ListView> UnselectAllPdfsCommand
+        public DelegateCommand<System.Windows.Controls.ListView> UnselectAllPdfsCommand
         {
-            get => mUnselectAllPdfsCommand ?? (mUnselectAllPdfsCommand = new DelegateCommand<ListView>(UnselectAllPdfsExecute, UnselectAllPdfsCanExecute));
+            get => mUnselectAllPdfsCommand ?? (mUnselectAllPdfsCommand = new DelegateCommand<System.Windows.Controls.ListView>(UnselectAllPdfsExecute, UnselectAllPdfsCanExecute));
             set => mUnselectAllPdfsCommand = value;
         }
-        public DelegateCommand<KeyEventArgs> KeyUpCommand
+        public DelegateCommand<System.Windows.Input.KeyEventArgs> KeyUpCommand
         {
-            get => mKeyUpCommand ?? (mKeyUpCommand = new DelegateCommand<KeyEventArgs>(KeyUpExecute));
+            get => mKeyUpCommand ?? (mKeyUpCommand = new DelegateCommand<System.Windows.Input.KeyEventArgs>(KeyUpExecute));
             set => mKeyUpCommand = value;
         }
-        public DelegateCommand<KeyEventArgs> KeyDownCommand
+        public DelegateCommand<System.Windows.Input.KeyEventArgs> KeyDownCommand
         {
-            get => mKeyDownCommand ?? (mKeyDownCommand = new DelegateCommand<KeyEventArgs>(KeyDownExecute));
+            get => mKeyDownCommand ?? (mKeyDownCommand = new DelegateCommand<System.Windows.Input.KeyEventArgs>(KeyDownExecute));
             set => mKeyDownCommand = value;
         }
-        public DelegateCommand<DragEventArgs> PdfDropCommand
+        public DelegateCommand<System.Windows.DragEventArgs> PdfDropCommand
         {
-            get => mPdfDropCommand ?? (mPdfDropCommand = new DelegateCommand<DragEventArgs>(PdfDropExecute));
+            get => mPdfDropCommand ?? (mPdfDropCommand = new DelegateCommand<System.Windows.DragEventArgs>(PdfDropExecute));
             set => mPdfDropCommand = value;
         }
-
         // Data
         public ObservableCollection<Pdf> PdfList
         {
@@ -120,6 +123,24 @@ namespace CombinePdf_GUI.ViewModels
                 //SetProperty(ref mSelectedPdfs, value);
                 mSelectedPdfs = value;
                 RemovePdfCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public string SelectedFolderPath
+        {
+            get => mSelectedFolderPath;
+            set
+            {
+                SetProperty(ref mSelectedFolderPath, value);
+                SaveCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public string SelectedFilename
+        {
+            get => mSelectedFilename;
+            set
+            {
+                SetProperty(ref mSelectedFilename, value);
+                SaveCommand.RaiseCanExecuteChanged();
             }
         }
         public bool IsOpenPdfAfterCombine
@@ -158,7 +179,7 @@ namespace CombinePdf_GUI.ViewModels
         #region Command methods
         private void AddPdfExecute()
         {
-            OpenFileDialog dialog = new OpenFileDialog()
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog()
             {
                 Title = "Select PDF",
                 Filter = "Adobe PDF Files|*.pdf",
@@ -179,55 +200,70 @@ namespace CombinePdf_GUI.ViewModels
             }
         }
 
-        private void CombinePdfExecute()
+        private void SelectFolderExecute()
         {
-            // Loop through all PDF
+            System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog()
+            {
+                ShowNewFolderButton = true
+            };
+            System.Windows.Forms.DialogResult dialogResult = dialog.ShowDialog();
+
+            if (dialogResult == System.Windows.Forms.DialogResult.OK)
+            {
+                SelectedFolderPath = dialog.SelectedPath;
+            }
+        }
+
+        private void SaveExecute()
+        {
+            if (Directory.Exists(SelectedFolderPath) == false)
+            {
+                System.Windows.MessageBox.Show("The selected folder path does not exist.",
+                                               "Invalid folder path",
+                                               System.Windows.MessageBoxButton.OK,
+                                               System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
+
             using (PdfDocument combinedPdf = new PdfDocument())
             {
                 foreach (Pdf pdf in PdfList)
                 {
                     combinedPdf.AddPdf(pdf.Document);
                 }
+                string fullFilePath = $@"{SelectedFolderPath}\{SelectedFilename}.pdf";
+                combinedPdf.Save(fullFilePath);
 
-                SaveFileDialog dialog = new SaveFileDialog()
+                using (Process p = new Process())
                 {
-                    Title = "Save PDF",
-                    Filter = "Adobe PDF Files|*.pdf",
-                    CheckPathExists = true
-                };
-
-                if (dialog.ShowDialog() == true)
-                {
-                    combinedPdf.Save(dialog.FileName);
-
-                    using (Process p = new Process())
+                    if (IsOpenFileExplorerAfterCombine)
                     {
-                        if (IsOpenFileExplorerAfterCombine)
+                        // Open the folder in File Explorer
+                        p.StartInfo = new ProcessStartInfo($"cmd.exe")
                         {
-                            // Open the folder in File Explorer
-                            p.StartInfo = new ProcessStartInfo($"cmd.exe")
-                            {
-                                WindowStyle = ProcessWindowStyle.Hidden,
-                                Arguments = $"/c explorer {Path.GetDirectoryName(dialog.FileName)}"
-                            };
-                            p.Start();
-                        }
-                        if (IsOpenPdfAfterCombine)
-                        {
-                            // Open the PDF
-                            p.StartInfo = new ProcessStartInfo(dialog.FileName);
-                            p.Start();
-                        }
+                            WindowStyle = ProcessWindowStyle.Hidden,
+                            Arguments = $"/c explorer {Path.GetDirectoryName(SelectedFolderPath)}"
+                        };
+                        p.Start();
+                    }
+                    if (IsOpenPdfAfterCombine)
+                    {
+                        // Open the PDF
+                        p.StartInfo = new ProcessStartInfo(fullFilePath);
+                        p.Start();
                     }
                 }
             }
         }
-        private bool CombinePdfCanExecute()
+        private bool SaveCanExecute()
         {
-            return PdfList.Count > 0;
+            return PdfList.Count > 0 &&
+                   string.IsNullOrWhiteSpace(SelectedFolderPath) == false &&
+                   string.IsNullOrWhiteSpace(SelectedFilename) == false;
         }
 
-        private void RemovePdfExecute(ListView listView)
+        private void RemovePdfExecute(System.Windows.Controls.ListView listView)
         {
             IEnumerable<Pdf> selectedPdfs = listView.SelectedItems.Cast<Pdf>();
             foreach (Pdf pdf in selectedPdfs.ToList())
@@ -238,7 +274,7 @@ namespace CombinePdf_GUI.ViewModels
             GC.Collect();
             listView.Focus();
         }
-        private bool RemovePdfCanExecute(ListView listView)
+        private bool RemovePdfCanExecute(System.Windows.Controls.ListView listView)
         {
             return listView.SelectedItems.Count > 0;
         }
@@ -301,7 +337,7 @@ namespace CombinePdf_GUI.ViewModels
             SelectedPdfs = new List<Pdf>(tmpSelectedPdfs.Cast<Pdf>());
         }
 
-        private void MoveUpExecute(ListView listView)
+        private void MoveUpExecute(System.Windows.Controls.ListView listView)
         {
             // Keep a list of the selected backups
             List<Pdf> selectedPdfs = listView.SelectedItems.Cast<Pdf>().ToList();
@@ -313,12 +349,12 @@ namespace CombinePdf_GUI.ViewModels
             ReselectPdfs(selectedPdfs);
             listView.Focus();
         }
-        private bool MoveUpCanExecute(ListView listview)
+        private bool MoveUpCanExecute(System.Windows.Controls.ListView listview)
         {
             return PdfList.Count > 0;
         }
 
-        private void MoveDownExecute(ListView listView)
+        private void MoveDownExecute(System.Windows.Controls.ListView listView)
         {
             // Keep a list of the selected backups            
             List<Pdf> selectedPdfs = listView.SelectedItems.Cast<Pdf>().ToList();
@@ -330,59 +366,59 @@ namespace CombinePdf_GUI.ViewModels
             ReselectPdfs(selectedPdfs);
             listView.Focus();
         }
-        private bool MoveDownCanExecute(ListView listView)
+        private bool MoveDownCanExecute(System.Windows.Controls.ListView listView)
         {
             return PdfList.Count > 0;
         }
 
-        private void SelectAllPdfsExecute(ListView listView)
+        private void SelectAllPdfsExecute(System.Windows.Controls.ListView listView)
         {
             mIsSelectAll = true;
             listView.SelectAll();
             listView.Focus();
         }
-        private bool SelectAllPdfsCanExecute(ListView listView)
+        private bool SelectAllPdfsCanExecute(System.Windows.Controls.ListView listView)
         {
             return PdfList.Count > 0;
         }
 
-        private void UnselectAllPdfsExecute(ListView listView)
+        private void UnselectAllPdfsExecute(System.Windows.Controls.ListView listView)
         {
             listView.UnselectAll();
             listView.Focus();
         }
-        private bool UnselectAllPdfsCanExecute(ListView listView)
+        private bool UnselectAllPdfsCanExecute(System.Windows.Controls.ListView listView)
         {
             return PdfList.Count > 0;
         }
 
-        private void KeyUpExecute(KeyEventArgs e)
+        private void KeyUpExecute(System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
+            if (e.Key == System.Windows.Input.Key.LeftShift || e.Key == System.Windows.Input.Key.RightShift)
             {
                 IsShiftPressed = false;
             }
-            else if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+            else if (e.Key == System.Windows.Input.Key.LeftCtrl || e.Key == System.Windows.Input.Key.RightCtrl)
             {
                 IsCtrlPressed = false;
             }
         }
 
-        private void KeyDownExecute(KeyEventArgs e)
+        private void KeyDownExecute(System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
+            if (e.Key == System.Windows.Input.Key.LeftShift || e.Key == System.Windows.Input.Key.RightShift)
             {
                 IsShiftPressed = true;
             }
-            else if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
+            else if (e.Key == System.Windows.Input.Key.LeftCtrl || e.Key == System.Windows.Input.Key.RightCtrl)
             {
                 IsCtrlPressed = true;
             }
         }
 
-        private void PdfDropExecute(DragEventArgs e)
+        private void PdfDropExecute(System.Windows.DragEventArgs e)
         {
-            if (e.Data is DataObject data)
+            if (e.Data is System.Windows.DataObject data)
             {
                 if (data.ContainsFileDropList())
                 {
@@ -402,7 +438,7 @@ namespace CombinePdf_GUI.ViewModels
         #region Event handlers
         private void SelectedPdfs_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            CombinePdfCommand.RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
             MoveUpCommand.RaiseCanExecuteChanged();
             MoveDownCommand.RaiseCanExecuteChanged();
         }

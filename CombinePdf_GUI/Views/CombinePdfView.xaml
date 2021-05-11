@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="CombinePdfUserControl"
     Width="509.5"
-    Height="508.5"
+    Height="525.167"
     Background="WhiteSmoke"
     FocusManager.FocusedElement="{Binding ElementName=AddPdfButton}"
     mc:Ignorable="d">
@@ -141,29 +141,77 @@
             Content="6"
             FontFamily="Marlett" />
         <!--#endregion-->
+
         <!--#region Output combined PDF-->
-        <Button
-            Width="496"
-            Height="69"
-            Margin="6,384,0,0"
+        <Label
+            Width="85"
+            Margin="-1,390,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Command="{Binding CombinePdfCommand}"
+            Content="Path:" />
+        <TextBox
+            Width="251"
+            Height="33"
+            Margin="84,389,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="16"
+            Text="{Binding SelectedFolderPath, UpdateSourceTrigger=PropertyChanged}"
+            TextWrapping="NoWrap" />
+        <Label
+            Width="85"
+            Margin="-1,427,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="File name:" />
+        <TextBox
+            Width="212"
+            Height="33"
+            Margin="84,426,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="16"
+            Text="{Binding SelectedFilename, UpdateSourceTrigger=PropertyChanged}"
+            TextWrapping="NoWrap" />
+        <Label
+            Width="39"
+            Margin="296,428,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            HorizontalContentAlignment="Left"
+            Content=".pdf" />
+        <Button
+            Width="162"
+            Height="34"
+            Margin="340,388,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Command="{Binding SelectFolderCommand}"
+            Content="Select folder"
+            Style="{StaticResource BlueButton}" />
+        <Button
+            Width="162"
+            Height="34"
+            Margin="340,425,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Command="{Binding SaveCommand}"
             Content="Combine"
             Style="{StaticResource BlueButton}" />
         <!--#endregion-->
         <!--#region Checkboxes-->
         <CheckBox
-            Width="156"
-            Height="16"
-            Margin="26,467,0,0"
+            Width="198"
+            Height="28"
+            Margin="26,469,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="Open PDF after combine"
             IsChecked="{Binding IsOpenPdfAfterCombine}" />
         <CheckBox
-            Width="246"
-            Margin="26,488,0,0"
+            Width="319"
+            Height="18"
+            Margin="26,497,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="Open folder in File Explorer after combine"

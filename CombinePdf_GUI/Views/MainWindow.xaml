@@ -9,7 +9,7 @@
     xmlns:views="clr-namespace:CombinePdf_GUI.Views"
     Title="{x:Static resx:Resources.AppTitle}"
     Width="573.155"
-    Height="567.5"
+    Height="584.167"
     Background="WhiteSmoke"
     FocusManager.FocusedElement="{Binding SelectedViewModel}"
     ResizeMode="CanMinimize"
