@@ -202,15 +202,17 @@ namespace CombinePdf_GUI.ViewModels
 
         private void SelectFolderExecute()
         {
-            System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog()
+            Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog dialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog
             {
-                ShowNewFolderButton = true
+                AllowPropertyEditing = false,
+                IsFolderPicker = true,
+                Title = "Select Folder"
             };
-            System.Windows.Forms.DialogResult dialogResult = dialog.ShowDialog();
 
-            if (dialogResult == System.Windows.Forms.DialogResult.OK)
+            Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult dialogResult = dialog.ShowDialog();
+            if (dialogResult == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok)
             {
-                SelectedFolderPath = dialog.SelectedPath;
+                SelectedFolderPath = dialog.FileName;
             }
         }
 
