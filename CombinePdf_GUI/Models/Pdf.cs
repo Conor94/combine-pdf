@@ -10,7 +10,6 @@ namespace CombinePdf_GUI.Models
         #region Fields and properties
         private string mFilename;
         private PdfDocument mPdfDocument;
-        private bool mIsSelected;        
 
         public string Filename
         {
@@ -21,11 +20,6 @@ namespace CombinePdf_GUI.Models
         {
             get => mPdfDocument;
             set => SetProperty(ref mPdfDocument, value);
-        }
-        public bool IsSelected
-        {
-            get => mIsSelected;
-            set => SetProperty(ref mIsSelected, value);
         }
         #endregion
 
