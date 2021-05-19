@@ -166,6 +166,9 @@ namespace CombinePdf_GUI.ViewModels
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// Constructor for the <see cref="CombinePdfViewModel"/>.
+        /// </summary>
         public CombinePdfViewModel(IEventAggregator eventAggregator, IContainerProvider container) : base(eventAggregator, container)
         {
             PdfList = new ObservableCollection<Pdf>();
@@ -177,6 +180,9 @@ namespace CombinePdf_GUI.ViewModels
         #endregion
 
         #region Command methods
+        /// <summary>
+        /// Adds a PDF to <see cref="PdfList"/>.
+        /// </summary>
         private void AddPdfExecute()
         {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog()
@@ -189,19 +195,26 @@ namespace CombinePdf_GUI.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                foreach (string filename in dialog.FileNames)
+                int numFilenames = dialog.FileNames.Length;
+                string[] filenames = dialog.FileNames;
+
+                for (int i = 0; i < numFilenames; i++)
                 {
                     // Add the filename to the listview if the file exists and is a PDF
-                    if (File.Exists(filename) && PdfReader.TestPdfFile(filename) != 0)
+                    if (File.Exists(filenames[i]) && PdfReader.TestPdfFile(filenames[i]) != 0)
                     {
-                        PdfList.Add(new Pdf(filename));
+                        PdfList.Add(new Pdf(filenames[i]));
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Opens a dialog for selecting folders.
+        /// </summary>
         private void SelectFolderExecute()
         {
+            // This dialog uses NuGet package Microsoft.WindowsAPICodePack.Shell https://www.nuget.org/packages/Microsoft-WindowsAPICodePack-Shell/
             Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog dialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog
             {
                 IsFolderPicker = true,
@@ -215,6 +228,9 @@ namespace CombinePdf_GUI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Saves the <see cref="Pdf"/> objects in <see cref="PdfList"/> to a single combined PDF (i.e. the PDFs are merged together).
+        /// </summary>
         private void SaveExecute()
         {
             if (Directory.Exists(SelectedFolderPath) == false)
@@ -257,6 +273,10 @@ namespace CombinePdf_GUI.ViewModels
                 }
             }
         }
+        /// <summary>
+        /// Checks whether the <see cref="SaveCommand"/> can be executed.
+        /// </summary>
+        /// <returns><see langword="true"/> if the command can be executed and <see langword="false"/> if it can't be executed.</returns>
         private bool SaveCanExecute()
         {
             return PdfList.Count > 0 &&
@@ -264,6 +284,11 @@ namespace CombinePdf_GUI.ViewModels
                    string.IsNullOrWhiteSpace(SelectedFilename) == false;
         }
 
+        /// <summary>
+        /// Removes the <see cref="Pdf"/> objects that are selected in the <paramref name="listView"/>
+        /// from the <see cref="PdfList"/>.
+        /// </summary>
+        /// <param name="listView">A <see cref="System.Windows.Controls.ListView"/> that holds a list of <see cref="Pdf"/> objects.</param>
         private void RemovePdfExecute(System.Windows.Controls.ListView listView)
         {
             IEnumerable<Pdf> selectedPdfs = listView.SelectedItems.Cast<Pdf>();
@@ -275,6 +300,10 @@ namespace CombinePdf_GUI.ViewModels
             GC.Collect();
             listView.Focus();
         }
+        /// <summary>
+        /// Checks whether the <see cref="RemovePdfCommand"/> can be executed.
+        /// </summary>
+        /// <returns><see langword="true"/> if the command can be executed and <see langword="false"/> if it can't be executed.</returns>
         private bool RemovePdfCanExecute(System.Windows.Controls.ListView listView)
         {
             return listView.SelectedItems.Count > 0;
@@ -287,8 +316,11 @@ namespace CombinePdf_GUI.ViewModels
                 if (IsShiftPressed && !IsCtrlPressed)
                 {
                     List<Pdf> pdfList = PdfList.ToList();
+
+                    // Get the indexes of the first and last Pdf
                     int firstIndex = pdfList.IndexOf((Pdf)tmpSelectedPdfs[0]);
                     int lastIndex = pdfList.IndexOf((Pdf)tmpSelectedPdfs[tmpSelectedPdfs.Count - 1]);
+
                     if (firstIndex < lastIndex)
                     {
                         // Select all PDFs between the first and last index
