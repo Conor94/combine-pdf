@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="CombinePdfUserControl"
-    Width="509.5"
+    Width="651"
     Height="525.167"
     Background="WhiteSmoke"
     FocusManager.FocusedElement="{Binding ElementName=AddPdfButton}"
@@ -28,9 +28,9 @@
         <!--#region Select PDF-->
         <ListView
             x:Name="PdfListView"
-            Width="463"
+            Width="608"
             Height="329"
-            Margin="6,0,0,0"
+            Margin="5,0,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             AllowDrop="True"
@@ -73,15 +73,15 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn
-                        Width="328"
+                        Width="430"
                         DisplayMemberBinding="{Binding Filename}"
                         Header="Name" />
                     <GridViewColumn
-                        Width="55"
+                        Width="60"
                         DisplayMemberBinding="{Binding Document.PageCount}"
                         Header="Pages" />
                     <GridViewColumn
-                        Width="55"
+                        Width="60"
                         DisplayMemberBinding="{Binding Document.FileSize, Converter={StaticResource FileSizeConverterInstance}}"
                         Header="Size" />
                 </GridView>
@@ -94,9 +94,9 @@
         </ListView>
         <Button
             x:Name="AddPdfButton"
-            Width="246"
+            Width="300"
             Height="45"
-            Margin="6,334,0,0"
+            Margin="5,334,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             HorizontalContentAlignment="Center"
@@ -106,16 +106,18 @@
             Style="{StaticResource BlueButton}" />
         <Button
             x:Name="RemovePdfButton"
-            Width="246"
+            Width="300"
             Height="45"
-            Margin="254,334,0,0"
+            Margin="313,334,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Command="{Binding RemovePdfCommand}"
             CommandParameter="{Binding ElementName=PdfListView}"
             Style="{StaticResource BlueButton}">
             <TextBlock
-                Width="46"
+                Width="78"
+                Height="38"
+                FontSize="14"
                 Text="Remove (Del)"
                 TextAlignment="Center"
                 TextWrapping="Wrap" />
@@ -123,7 +125,7 @@
         <Button
             Width="28"
             Height="23"
-            Margin="474,136,0,0"
+            Margin="618,136,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Command="{Binding MoveUpCommand}"
@@ -133,7 +135,7 @@
         <Button
             Width="28"
             Height="23"
-            Margin="474,166,0,0"
+            Margin="618,166,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Command="{Binding MoveDownCommand}"
@@ -145,14 +147,14 @@
         <!--#region Output combined PDF-->
         <Label
             Width="85"
-            Margin="-1,390,0,0"
+            Margin="-1,399,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="Path:" />
         <TextBox
-            Width="251"
+            Width="362"
             Height="33"
-            Margin="84,389,0,0"
+            Margin="84,398,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             FontSize="16"
@@ -160,14 +162,14 @@
             TextWrapping="NoWrap" />
         <Label
             Width="85"
-            Margin="-1,427,0,0"
+            Margin="-1,436,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="File name:" />
         <TextBox
-            Width="212"
+            Width="323"
             Height="33"
-            Margin="84,426,0,0"
+            Margin="84,435,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             FontSize="16"
@@ -175,7 +177,7 @@
             TextWrapping="NoWrap" />
         <Label
             Width="39"
-            Margin="296,428,0,0"
+            Margin="407,437,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             HorizontalContentAlignment="Left"
@@ -183,7 +185,7 @@
         <Button
             Width="162"
             Height="34"
-            Margin="340,388,0,0"
+            Margin="451,396,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Command="{Binding SelectFolderCommand}"
@@ -192,7 +194,7 @@
         <Button
             Width="162"
             Height="34"
-            Margin="340,425,0,0"
+            Margin="451,434,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Command="{Binding SaveCommand}"
@@ -203,7 +205,7 @@
         <CheckBox
             Width="198"
             Height="28"
-            Margin="26,469,0,0"
+            Margin="26,470,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="Open PDF after combine"
@@ -211,7 +213,7 @@
         <CheckBox
             Width="319"
             Height="18"
-            Margin="26,497,0,0"
+            Margin="26,498,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="Open folder in File Explorer after combine"

@@ -8,11 +8,10 @@
     xmlns:viewModels="clr-namespace:CombinePdf_GUI.ViewModels"
     xmlns:views="clr-namespace:CombinePdf_GUI.Views"
     Title="{x:Static resx:Resources.AppTitle}"
-    Width="573.155"
-    Height="584.167"
     Background="WhiteSmoke"
     FocusManager.FocusedElement="{Binding SelectedViewModel}"
     ResizeMode="CanMinimize"
+    SizeToContent="WidthAndHeight"
     mc:Ignorable="d">
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModels:CombinePdfViewModel}">
