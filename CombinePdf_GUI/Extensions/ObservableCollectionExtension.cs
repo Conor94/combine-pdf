@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CombinePdf_GUI.Extensions
 {
@@ -60,6 +61,57 @@ namespace CombinePdf_GUI.Extensions
                 }
             }
             return items;
+        }
+
+        public static void ShiftSelectItem<T>(this ObservableCollection<T> items, List<T> selectedItems) where T : PrismBase.Mvvm.ModelBase
+        {
+            List<T> itemsList = items.ToList();
+
+            // Get the indexes of the first and last Pdf
+            int firstIndex = itemsList.IndexOf(selectedItems[0]);
+            int lastIndex = itemsList.IndexOf(selectedItems[selectedItems.Count - 1]);
+
+            if (firstIndex < lastIndex)
+            {
+                // Select all PDFs between the first and last index
+                while (firstIndex < lastIndex)
+                {
+                    items.ElementAt(firstIndex).IsSelected = true;
+                    firstIndex++;
+                }
+            }
+            else
+            {
+                // Select all PDFs between the first and last index
+                while (firstIndex > lastIndex)
+                {
+                    items.ElementAt(firstIndex).IsSelected = true;
+                    firstIndex--;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="item"></param>
+        /// <param name="previouslySelectedItems">The items that are already selected.</param>
+        /// <param name="selectedItems">The </param>
+        public static void SelectItem<T>(this ObservableCollection<T> items, List<T> selectedItems) where T : PrismBase.Mvvm.ModelBase
+        {
+            // Unselect all PDFs except the most recently selected (most recently selected is the last element in the list)
+            if (items != null &&
+                selectedItems.Count > 0 &&
+                items.Contains(selectedItems[0]))
+            {
+                items.Remove(selectedItems[0]);
+                selectedItems[0].IsSelected = false;
+            }
+            else if (items != null && items.Count() > 0)
+            {
+                selectedItems.Add(items.ElementAt(0));
+            }
         }
     }
 }
