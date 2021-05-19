@@ -4,12 +4,22 @@ namespace PrismBase.Mvvm
 {
     public abstract class ModelBase : DataErrorBindableBase, IDisposable
     {
-        // IDisposable
-        protected bool mIsDisposed;
+        private bool mIsSelected;
+        public bool IsSelected
+        {
+            get => mIsSelected;
+            set => SetProperty(ref mIsSelected, value);
+        }
+
 
         public ModelBase() : base()
         {
+            mIsSelected = false;
         }
+
+
+        // IDisposable
+        protected bool mIsDisposed;
 
         public void Dispose() => Dispose(true);
 
