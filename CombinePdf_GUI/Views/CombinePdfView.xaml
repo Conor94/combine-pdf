@@ -81,7 +81,7 @@
                         DisplayMemberBinding="{Binding Document.PageCount}"
                         Header="Pages" />
                     <GridViewColumn
-                        Width="60"
+                        Width="70"
                         DisplayMemberBinding="{Binding Document.FileSize, Converter={StaticResource FileSizeConverterInstance}}"
                         Header="Size" />
                 </GridView>
