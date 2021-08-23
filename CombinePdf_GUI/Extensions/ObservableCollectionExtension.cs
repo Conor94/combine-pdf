@@ -91,13 +91,7 @@ namespace CombinePdf_GUI.Extensions
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="item"></param>
-        /// <param name="previouslySelectedItems">The items that are already selected.</param>
-        /// <param name="selectedItems">The </param>
+        /// <summary>Selects the most recently selected item and unselects all others.</summary>
         public static void SelectItem<T>(this ObservableCollection<T> items, List<T> selectedItems) where T : PrismBase.Mvvm.ModelBase
         {
             // Unselect all PDFs except the most recently selected (most recently selected is the last element in the list)
