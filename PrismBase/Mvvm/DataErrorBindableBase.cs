@@ -49,7 +49,7 @@ namespace PrismBase.Mvvm
         /// <summary>
         /// Constructor for the <see cref="DataErrorBindableBase"/> class.
         /// </summary>
-        public DataErrorBindableBase()
+        protected DataErrorBindableBase()
         {
             Validators = null;
         }

@@ -1,6 +1,6 @@
 ﻿using Prism.Events;
 using Prism.Ioc;
-using PrismBase.Events;
+using PrismBase.Mvvm.Events;
 
 namespace PrismBase.Mvvm
 {
@@ -32,7 +32,7 @@ namespace PrismBase.Mvvm
         #endregion
 
         #region Constructor
-        public ViewModelBase(IEventAggregator eventAggregator, IContainerProvider container)
+        protected ViewModelBase(IEventAggregator eventAggregator, IContainerProvider container)
         {
             Container = container;
             EventAggregator = eventAggregator;

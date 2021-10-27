@@ -12,7 +12,7 @@ namespace PrismBase.Mvvm
         }
 
 
-        public ModelBase() : base()
+        protected ModelBase() : base()
         {
             mIsSelected = false;
         }
