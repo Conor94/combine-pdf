@@ -5,7 +5,7 @@ using System;
 
 namespace CombinePdf_Console
 {
-    class Program
+    sealed class Program
     {
         static void Main(string[] args)
         {
