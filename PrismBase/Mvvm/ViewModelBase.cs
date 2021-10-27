@@ -1,6 +1,6 @@
 ﻿using Prism.Events;
 using Prism.Ioc;
-using PrismBase.Mvvm.Events;
+using PrismBase.Events;
 
 namespace PrismBase.Mvvm
 {
