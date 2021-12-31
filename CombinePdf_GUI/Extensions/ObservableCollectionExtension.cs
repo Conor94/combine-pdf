@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PrismMvvmBase.Bindable;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -63,7 +64,7 @@ namespace CombinePdf_GUI.Extensions
             return items;
         }
 
-        public static void ShiftSelectItem<T>(this ObservableCollection<T> items, List<T> selectedItems) where T : PrismBase.Mvvm.ModelBase
+        public static void ShiftSelectItem<T>(this ObservableCollection<T> items, List<T> selectedItems) where T : ModelBase
         {
             List<T> itemsList = items.ToList();
 
@@ -92,7 +93,7 @@ namespace CombinePdf_GUI.Extensions
         }
 
         /// <summary>Selects the most recently selected item and unselects all others.</summary>
-        public static void SelectItem<T>(this ObservableCollection<T> items, List<T> selectedItems) where T : PrismBase.Mvvm.ModelBase
+        public static void SelectItem<T>(this ObservableCollection<T> items, List<T> selectedItems) where T : ModelBase
         {
             // Unselect all PDFs except the most recently selected (most recently selected is the last element in the list)
             if (items != null &&

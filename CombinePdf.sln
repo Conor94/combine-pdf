@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetExtension", "DotNetEx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombinePdf_GUI", "CombinePdf_GUI\CombinePdf_GUI.csproj", "{22AB57D3-E64F-4EDF-B546-F3D2E7496D21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismBase", "PrismBase\PrismBase.csproj", "{1713836C-7EBF-4AA2-A196-F9569826E38E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{22AB57D3-E64F-4EDF-B546-F3D2E7496D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22AB57D3-E64F-4EDF-B546-F3D2E7496D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22AB57D3-E64F-4EDF-B546-F3D2E7496D21}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1713836C-7EBF-4AA2-A196-F9569826E38E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1713836C-7EBF-4AA2-A196-F9569826E38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1713836C-7EBF-4AA2-A196-F9569826E38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1713836C-7EBF-4AA2-A196-F9569826E38E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

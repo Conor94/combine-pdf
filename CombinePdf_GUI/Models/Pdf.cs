@@ -1,6 +1,6 @@
 ﻿using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
-using PrismBase.Mvvm;
+using PrismMvvmBase.Bindable;
 using System.IO;
 
 namespace CombinePdf_GUI.Models
